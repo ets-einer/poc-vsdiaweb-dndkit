@@ -1,16 +1,27 @@
 import { useState } from 'react'
 import './App.css'
 import { DndContext } from "@dnd-kit/core";
+import { Draggable } from './DndComponents/Draggable';
+import { Droppable } from './DndComponents/Droppable';
 
 function App() {
-  
-
-  return (
-   <div className='flex flex-col justify-center items-center'>
-      <h1 className="font-bold text-2xl">POC VSDIA DND</h1>
-      <DndContext>
-        
-      </DndContext>
+  const [isDropped, setIsDropped] = useState(false);
+  const draggableMarkup = (
+    <Draggable>Drag me</Draggable>
+  );
+  function handleDragEnd(event:any) {
+    if (event.over && event.over.id === 'droppable') {
+      setIsDropped(true);
+    }
+  }
+  return (<div>
+    <DndContext onDragEnd={handleDragEnd}>
+    {!isDropped ? draggableMarkup : null}
+    <Droppable>
+      {isDropped ? draggableMarkup : 'Drop here'}
+    </Droppable>
+  </DndContext>
+);
       
    </div>
   )
