@@ -1,34 +1,41 @@
-import { useState } from 'react'
-import './App.css'
-import { DndContext } from "@dnd-kit/core";
-import { Draggable } from './DndComponents/Draggable';
-import { Droppable } from './DndComponents/Droppable';
+import  {useState} from 'react';
+import {DndContext} from '@dnd-kit/core';
+
+import {Droppable} from './DndComponents/Droppable';
+import {Draggable} from './DndComponents/Draggable';
 
 function App() {
-  const [isDropped, setIsDropped] = useState(false);
-  
+  const containers = ['A', 'B', 'C'];
+  const [parent, setParent] = useState(null);
   const draggableMarkup = (
-    <Draggable>Pega!</Draggable>
-    
+    <Draggable id="draggable">Drag me</Draggable>
   );
-  const drag = ( <Draggable>Another one</Draggable>);
-  function handleDragEnd(event:any) {
-    if (event.over && event.over.id === 'droppable') {
-      setIsDropped(true);
-    }
+  const handleDragEnd = (event:any) =>  {
+    const {over} = event;
+
+    // If the item is dropped over a container, set it as the parent
+    // otherwise reset the parent to `null`
+    setParent(over ? over.id : null);
   }
 
-  return (<div className="flex-flex-col gap-20">
+  
+  return (
     <DndContext onDragEnd={handleDragEnd}>
-    {!isDropped ? draggableMarkup : null}
-    <Droppable>
-      {isDropped ? draggableMarkup : 'Solta aqui!'}
-    </Droppable>
-  </DndContext>
-);
-      
-   </div>
-  )
-}
+      {parent === null ? draggableMarkup : null}
 
-export default App
+      <div className='flex flex-row'>
+      {containers.map((id) => (
+        // We updated the Droppable component so it would accept an `id`
+        // prop and pass it to `useDroppable`
+        <Droppable key={id} id={id}>
+          {parent === id ? draggableMarkup : 'Drop here'}
+        </Droppable>
+      ))}
+      </div>
+    </DndContext>
+  );
+
+ 
+};
+
+export default App;
