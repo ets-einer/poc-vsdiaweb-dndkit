@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 
-// Within your component that receives `transform` from `useDraggable`:
+
 
 export const Draggable = (props: any) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -15,8 +15,8 @@ export const Draggable = (props: any) => {
     : undefined;
 
   return (
-    <div>
-      <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div className="">
+      <button ref={setNodeRef} style={style} {...listeners} {...attributes} className="border-2 border-blue-600 rounded-lg bg-blue-300 w-40 h-20 flex justify-center items-center font-bold text-blue-600">
         {props.children}
       </button>
     </div>
