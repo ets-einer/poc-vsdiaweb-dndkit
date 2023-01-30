@@ -1,6 +1,6 @@
 import  {useState} from 'react';
 import {closestCenter, DndContext} from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import {SortableItem} from './SortableItem'
 
 function App() {
@@ -17,6 +17,16 @@ function App() {
 
   function handleDragEnd(event:any){
     console.log("Drag done")
+    const {active, over} = event
+
+    if(active.id !== over.id){
+      setPessoas((items)=>{
+        const activeItems = items.indexOf(active.id)
+        const overItems = items.indexOf(over.id)
+
+        return arrayMove(items, activeItems, overItems)
+      })
+    }
   }
 
  
