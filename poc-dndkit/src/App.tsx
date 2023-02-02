@@ -3,8 +3,11 @@ import { closestCenter, DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './SortableItem'
 import { Raia } from './Raia';
+import { Lista } from './Lista';
 
 function App() {
+  const list = Lista()
+
   const style = {
     background: '#02f30f',
     padding: '10px',
@@ -19,9 +22,10 @@ function App() {
         <button onClick={(e) => setPessoas([...pessoas, newVal])}>Add something</button>
       </div>
       <h3>Sortable list</h3>
-      <SortableContext items={pessoas} strategy={verticalListSortingStrategy}>
-        {pessoas.map((raia)=>
-          <Raia id={raia} key={raia}>
+      <SortableContext items={list.listaRaias} strategy={verticalListSortingStrategy}>
+        {list.listaRaias.map((raia)=>
+       
+          <Raia id={raia.id} key={raia.id}>
           
         </Raia>
         )}
@@ -35,7 +39,7 @@ function App() {
     const { active, over } = event
 
     if (active.id !== over.id) {
-      setPessoas((items) => {
+      list.setRaias((items) => {
         const activeItems = items.indexOf(active.id)
         const overItems = items.indexOf(over.id)
 
