@@ -37,15 +37,13 @@ function handleDragEnd(event: any) {
       const activeItems = raiaSelecionada.elementos.indexOf(active.id)
       const activeName = active.id;
       const overName = over.id;
-      const overItems = raiaSelecionada.elementos.indexOf(over.id)
-      console.log(raiaSelecionada.elementos);
+      const overItems = raiaSelecionada.elementos.indexOf(over.id);
 
       raiaSelecionada.elementos[overItems] = activeName;
       raiaSelecionada.elementos[activeItems] = overName;
-      console.log(raiaSelecionada.elementos);
-      raiaSelecionada.elementos.map(() =>{
-        return
-      })
+      let newArr = [...list.listaRaias];
+      newArr[props.id] = raiaSelecionada;
+      list.setRaias(newArr);
 
     //   list.setRaias((items) => {                                                                
        
@@ -59,13 +57,11 @@ function handleDragEnd(event: any) {
   }
 
 return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={list.listaRaias[props.id - 1].elementos} strategy={horizontalListSortingStrategy}>
     <div style={slaporra} ref={setNodeRef} {...attributes} {...listeners}>
         {list.listaRaias[props.id - 1].elementos.map(pessoa => <SortableItem key={pessoa} id={pessoa} />)}
     </div>
-    </SortableContext>
-    </DndContext>
+         </SortableContext>
     
 )
 }
