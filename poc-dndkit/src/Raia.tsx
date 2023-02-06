@@ -2,21 +2,25 @@ import { SortableContext, arrayMove, horizontalListSortingStrategy, useSortable,
 import { CSS } from "@dnd-kit/utilities";
 import { SortableItem } from "./SortableItem";
 import { useState } from "react";
-import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, closestCenter, useDroppable } from "@dnd-kit/core";
 import { Lista } from "./Lista";
 
 export function Raia(props:any){
     const list = Lista();
     const [pessoas, setPessoas] = useState(["Miura", "Camuda", "Igor", "Prates"]);
+    const {id} = props;
     const
     {
         attributes,
         listeners,
-        setNodeRef,
         transform,
         transition,
     } = useSortable({ id: props.id });
 
+    const { setNodeRef } = useDroppable({
+        id
+      });
+    
 const slaporra={
     transform: CSS.Transform.toString(transform),
     transition,

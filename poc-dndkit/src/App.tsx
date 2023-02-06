@@ -15,13 +15,20 @@ function App() {
   }
   const [pessoas, setPessoas] = useState(["Raia1", "Raia2", "Raia3", "Raia4"]);
   const [newVal, setNewVal] = useState("")
+  const [activeId, setActiveId] = useState();
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext 
+    collisionDetection={closestCenter} 
+    // onDragOver={onDragover} 
+    onDragEnd={handleDragEnd}
+    // onDragStart={handleDragStart}
+    >
       <div>
         <input type="text" onChange={(e) => setNewVal(e.target.value)} />
         <button onClick={(e) => setPessoas([...pessoas, newVal])}>Add something</button>
       </div>
       <h3>Sortable list</h3>
+      
       <SortableContext items={list.listaRaias} strategy={verticalListSortingStrategy}>
         {list.listaRaias.map((raia)=>
        
@@ -37,31 +44,24 @@ function App() {
   function handleDragEnd(event: any) {
     // console.log(event.collisions)
     const { active, over } = event
-    console.log(event.active.id)
-    console.log(list.listaRaias)
     if(typeof event.active.id === "string"){
 
-      const raiaSelecionada = list.listaRaias.findIndex(function(obj){
-
-        
-      ) 
-      console.log(raiaSelecionada);
-      list.listaRaias[raiaSelecionada.id -1]
-      const activeItems = raiaSelecionada.elementos.indexOf(active.id)
+      let raiaActive = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.active.id))
+      let raiaOver = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.over.id))
+    
+      const activeItems = raiaActive.elementos.indexOf(active.id)
       const activeName = active.id;
       const overName = over.id;
-      const overItems = raiaSelecionada.elementos.indexOf(over.id);
+      const overItems = raiaOver.elementos.indexOf(over.id);
 
-      raiaSelecionada.elementos[overItems] = activeName;
-      raiaSelecionada.elementos[activeItems] = overName;
-      let newArr = [...list.listaRaias];
-      newArr[props.id] = raiaSelecionada;
-      list.setRaias(newArr);
+      raiaOver.elementos[overItems] = activeName;
+      raiaActive.elementos[activeItems] = overName;
+      return arrayMove(raiaActive?.elementos, activeItems, overItems)
+
 
     }else{
     if (active.id !== over.id) {
       list.setRaias((items) => {
-        console.log(active.id);
         const activeItems = list.listaRaias.findIndex(function(obj){
           return obj.id === active.id;
         })
@@ -69,13 +69,36 @@ function App() {
         const overItems = list.listaRaias.findIndex(function(obj){
           return obj.id === over.id;
         })
-        console.log(activeItems + "/" + overItems)
         return arrayMove(items, activeItems, overItems)
       })
     }
   }
   }
 
+  // function onDragover(event:any){
+  //   const id = event.active.id;
+  //   const overId = event.over;
+
+
+  //   // list.listaRaias.map(val => {
+  //   //   console.log(val.elementos);
+
+  //   //   if(id in val.elementos){
+  //   //     console.log(id);
+  //   //   }
+  //   // })
+  //   let listaDestino = null;
+  //   let listaOrigem = null;
+  //   listaDestino = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.active.id));
+  //   listaOrigem = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.over.id));
+
+  // }
+  // function handleDragStart(event:any) {
+  //   const { active } = event;
+  //   const { id } = active;
+
+  //   setActiveId(id);
+  // }
 
 };
 
