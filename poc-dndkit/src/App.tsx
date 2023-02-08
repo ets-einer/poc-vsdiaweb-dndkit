@@ -1,144 +1,182 @@
-import { useState } from 'react';
-import { closestCenter, DndContext } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { SortableItem } from './SortableItem'
-import { Raia } from './Raia';
-import { Lista } from './Lista';
+import React, { useState } from "react";
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
+import Droppable from "./components/Droppable";
+import Item from "./components/Item";
+import { arrayMove, insertAtIndex, removeAtIndex } from "./utils/array.js";
+
+import "./App.css";
+const group1={
+  cards: ["1", "2", "3"],
+  id:1,
+  color:"white"
+
+}
+const group2={
+  cards: ["4", "5", "6"],
+  id:2,
+  color:"white"
+
+}
+const group3={
+  cards: ["7", "8", "9"],
+  id:3,
+  color:"white"
+
+}
 function App() {
-  const list = Lista()
+  const [itemGroups, setItemGroups] = useState([
+    group1,
+    group2,
+    group3
+  ]
+  );
+  const [activeId, setActiveId] = useState(null);
 
-  const style = {
-    background: '#02f30f',
-    padding: '10px',
-    margin: '10px'
-  }
-  const [pessoas, setPessoas] = useState(["Raia1", "Raia2", "Raia3", "Raia4"]);
-  const [newVal, setNewVal] = useState("")
-  const [activeId, setActiveId] = useState();
-  return (
-    <DndContext 
-    collisionDetection={closestCenter} 
-    // onDragOver={onDragover} 
-    onDragEnd={handleDragEnd}
-    // onDragStart={handleDragStart}
-    >
-      <div>
-        <input type="text" onChange={(e) => setNewVal(e.target.value)} />
-        <button onClick={(e) => setPessoas([...pessoas, newVal])}>Add something</button>
-      </div>
-      <h3>Sortable list</h3>
-      
-      <SortableContext items={list.listaRaias} strategy={verticalListSortingStrategy}>
-        {list.listaRaias.map((raia)=>
-       
-          <Raia id={raia.id} key={raia.id}>
-          
-        </Raia>
-        )}
-
-      </SortableContext>
-    </DndContext>
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
   );
 
-  function handleDragEnd(event: any) {
-    // console.log(event.collisions)
-    const { active, over } = event
-    if(typeof event.active.id === "string"){
+  const handleDragStart = ({ active }) => setActiveId(active.id);
 
-      let raiaActive = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.active.id))
-      let raiaOver = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.over.id))
-    
-      const activeItems = raiaActive.elementos.indexOf(active.id)
-      const activeName = active.id;
-      const overName = over.id;
-      const overItems = raiaOver.elementos.indexOf(over.id);
+  const handleDragCancel = () => setActiveId(null);
 
-      raiaOver.elementos[overItems] = activeName;
-      raiaActive.elementos[activeItems] = overName;
-      return arrayMove(raiaActive?.elementos, activeItems, overItems)
+  const handleDragOver = ({ active, over }) => {
+    const overId = over?.id;
 
-
-    }else{
-    if (active.id !== over.id) {
-      list.setRaias((items) => {
-        const activeItems = list.listaRaias.findIndex(function(obj){
-          return obj.id === active.id;
-        })
-      
-        const overItems = list.listaRaias.findIndex(function(obj){
-          return obj.id === over.id;
-        })
-        return arrayMove(items, activeItems, overItems)
-      })
+    if (!overId) {
+      return;
     }
-  }
-  }
 
-  // function onDragover(event:any){
-  //   const id = event.active.id;
-  //   const overId = event.over;
+    const activeContainer = active.data.current.sortable.containerId;
+    const overContainer = over.data.current?.sortable.containerId || over.id;
 
+    if (activeContainer !== overContainer) {
+      setItemGroups((itemGroups) => {
+        const activeIndex = active.data.current.sortable.index;
+        const overIndex =
+          over.id in itemGroups
+            ? itemGroups[overContainer].length + 1
+            : over.data.current.sortable.index;
 
-  //   // list.listaRaias.map(val => {
-  //   //   console.log(val.elementos);
+        return moveBetweenContainers(
+          itemGroups,
+          activeContainer,
+          activeIndex,
+          overContainer,
+          overIndex,
+          active.id
+        );
+      });
+    }
+  };
 
-  //   //   if(id in val.elementos){
-  //   //     console.log(id);
-  //   //   }
-  //   // })
-  //   let listaDestino = null;
-  //   let listaOrigem = null;
-  //   listaDestino = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.active.id));
-  //   listaOrigem = list.listaRaias.find(elemento => elemento.elementos.find(val => val === event.over.id));
+  const handleDragEnd = ({ active, over }) => {
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
 
-  // }
-  // function handleDragStart(event:any) {
-  //   const { active } = event;
-  //   const { id } = active;
+    if (active.id !== over.id) {
+      let activeContainer = active.data.current.sortable.containerId;
+      let overContainer = over.data.current?.sortable.containerId || over.id;
+      console.log(itemGroups)
+      activeContainer = itemGroups.findIndex(obj => {
+        return obj.id === activeContainer;
+      });
+      overContainer = itemGroups.findIndex(obj => {
+        return obj.id === overContainer;
+      });
+      const activeIndex = active.data.current.sortable.index;
+   
+      const overIndex =
+        over.id in itemGroups[overContainer]
+          ? itemGroups[overContainer].cards.length + 1
+          : over.data.current.sortable.index;
 
-  //   setActiveId(id);
-  // }
+      setItemGroups((itemGroups) => {
+        let newItems;
 
-};
+        if (activeContainer === overContainer) {
+          newItems = [
+            ...itemGroups,
+            [overContainer]= arrayMove(
+              itemGroups[overContainer].cards,
+              activeIndex,
+              overIndex,
+              over.data.current?.sortable.containerId || over.id
+            )
+        ];
+        } else {
+          console.log("asasasasasas")
+          newItems = moveBetweenContainers(
+            itemGroups,
+            activeContainer,
+            activeIndex,
+            overContainer,
+            overIndex,
+            active.id
+          );
+        }
+        console.log(newItems);
+
+        return newItems;
+      });
+    }
+
+    setActiveId(null);
+  };
+
+  const moveBetweenContainers = (
+    items:any,
+    activeContainer:any,
+    activeIndex:any,
+    overContainer:any,
+    overIndex:any,
+    item:any
+  ) => {
+    return {
+      ...items,
+      [activeContainer]: removeAtIndex(items[activeContainer].cards, activeIndex),
+      [overContainer]: insertAtIndex(items[overContainer].cards, overIndex, item)
+    };
+  };
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragCancel={handleDragCancel}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="container">
+        {Object.keys(itemGroups).map((group) => (
+          <Droppable
+            id={itemGroups[group].id}
+            items={itemGroups[group].cards}
+            key={itemGroups[group].id}
+          />
+        ))}
+      </div>
+      <DragOverlay>
+        {activeId ? <Item id={activeId} dragOverlay /> : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
 
 export default App;
-
-
-
-
-// import React, {useState} from 'react';
-// import {DndContext} from '@dnd-kit/core';
-
-// import {Droppable} from './Droppable'
-// import {Draggable} from './Draggable';
-
-// export default function App() {
-//   const containers = ['A', 'B', 'C'];
-//   const [parent, setParent] = useState(null);
-//   const draggableMarkup = (
-//     <Draggable id="draggable">Drag me</Draggable>
-//   );
-
-//   return (
-//     <DndContext onDragEnd={handleDragEnd}>
-//       {parent === null ? draggableMarkup : null}
-
-//       {containers.map((id) => (
-//         // We updated the Droppable component so it would accept an `id`
-//         // prop and pass it to `useDroppable`
-//         <Droppable key={id} id={id}>
-//           {parent === id ? draggableMarkup : 'Drop here'}
-//         </Droppable>
-//       ))}
-//     </DndContext>
-//   );
-
-//   function handleDragEnd(event) {
-//     const {over} = event;
-
-//     // If the item is dropped over a container, set it as the parent
-//     // otherwise reset the parent to `null`
-//     setParent(over ? over.id : null);
-//   }
-// };

@@ -1,6 +1,6 @@
 import { SortableContext, arrayMove, horizontalListSortingStrategy, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SortableItem } from "./SortableItem";
+import { SortableItem } from "./components/SortableItem";
 import { useState } from "react";
 import { DndContext, DragEndEvent, closestCenter, useDroppable } from "@dnd-kit/core";
 import { Lista } from "./Lista";

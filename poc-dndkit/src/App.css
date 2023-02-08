@@ -2,3 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.container > * {
+    margin: 5px;
+}
