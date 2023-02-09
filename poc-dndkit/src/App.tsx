@@ -61,17 +61,24 @@ function App() {
       return;
     }
 
-    const activeContainer = active.data.current.sortable.containerId;
-    const overContainer = over.data.current?.sortable.containerId || over.id;
+    let activeContainer = active.data.current.sortable.containerId;
+    let overContainer = over.data.current?.sortable.containerId || over.id;
 
+    activeContainer = itemGroups.findIndex(obj => {
+      return obj.id === activeContainer;
+    });
+    overContainer = itemGroups.findIndex(obj => {
+      return obj.id === overContainer;
+    });
     if (activeContainer !== overContainer) {
       setItemGroups((itemGroups) => {
         const activeIndex = active.data.current.sortable.index;
+     
         const overIndex =
-          over.id in itemGroups
-            ? itemGroups[overContainer].length + 1
+          over.id === itemGroups[overContainer].id
+            ? itemGroups[overContainer].cards.length + 1
             : over.data.current.sortable.index;
-
+        console.log(overIndex);
         return moveBetweenContainers(
           itemGroups,
           activeContainer,
@@ -101,6 +108,7 @@ function App() {
         return obj.id === overContainer;
       });
       const activeIndex = active.data.current.sortable.index;
+      console.log(activeContainer)
    
       const overIndex =
         over.id in itemGroups[overContainer]
@@ -112,16 +120,17 @@ function App() {
 
         if (activeContainer === overContainer) {
           newItems = [
-            ...itemGroups,
-            [overContainer]= arrayMove(
-              itemGroups[overContainer].cards,
-              activeIndex,
-              overIndex,
-              over.data.current?.sortable.containerId || over.id
-            )
+            ...itemGroups
         ];
+        newItems[overContainer] = arrayMove(
+          itemGroups[overContainer].cards,
+          activeIndex,
+          overIndex,
+          over.data.current?.sortable.containerId || over.id
+        )
+        console.log(Object.keys(itemGroups));
         } else {
-          console.log("asasasasasas")
+        
           newItems = moveBetweenContainers(
             itemGroups,
             activeContainer,
@@ -131,12 +140,12 @@ function App() {
             active.id
           );
         }
-        console.log(newItems);
+    
 
         return newItems;
       });
     }
-
+  
     setActiveId(null);
   };
 
@@ -148,11 +157,13 @@ function App() {
     overIndex:any,
     item:any
   ) => {
-    return {
-      ...items,
-      [activeContainer]: removeAtIndex(items[activeContainer].cards, activeIndex),
-      [overContainer]: insertAtIndex(items[overContainer].cards, overIndex, item)
-    };
+    const movedArray = [
+      ...items
+    ];
+    movedArray[activeContainer] = removeAtIndex(items[activeContainer].cards, activeIndex, items[activeContainer].id, items[activeContainer].color);
+    movedArray[overContainer] = insertAtIndex(items[overContainer].cards, overIndex, item, items[overContainer].id, items[overContainer].color);
+
+    return movedArray;
   };
 
   return (
@@ -164,7 +175,9 @@ function App() {
       onDragEnd={handleDragEnd}
     >
       <div className="container">
+       
         {Object.keys(itemGroups).map((group) => (
+     
           <Droppable
             id={itemGroups[group].id}
             items={itemGroups[group].cards}
