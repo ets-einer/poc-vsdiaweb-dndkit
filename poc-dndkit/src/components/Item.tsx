@@ -1,6 +1,7 @@
 import React from "react";
 
 import "./Item.css";
+import { ActionBox } from "./ActionBox";
 
 const Item = ({ id, dragOverlay }) => {
   const style = {
@@ -8,9 +9,9 @@ const Item = ({ id, dragOverlay }) => {
   };
 
   return (
-    <div style={style} className="item">
-      Item {id}
-    </div>
+
+    <ActionBox opacidade={"opacity-80 "}/>
+
   );
 };
 

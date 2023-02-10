@@ -9,6 +9,7 @@ import {
   useSensors
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { ActionBox } from "./components/ActionBox";
 
 import Droppable from "./components/Droppable";
 import Item from "./components/Item";
