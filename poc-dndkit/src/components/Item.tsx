@@ -7,10 +7,9 @@ const Item = ({ id, dragOverlay }) => {
   const style = {
     cursor: dragOverlay ? "grabbing" : "grab",
   };
-
   return (
 
-    <ActionBox opacidade={"opacity-80 "}/>
+    <ActionBox opacidade={"opacity-80 "} id={id}/>
 
   );
 };

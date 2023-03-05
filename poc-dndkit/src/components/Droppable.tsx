@@ -5,14 +5,18 @@ import { horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortabl
 import SortableItem from "./SortableItem";
 
 import "./Droppable.css";
+import { add } from "@dnd-kit/utilities";
 
-const Droppable = ({ id, items }) => {
+const Droppable = ({ id, items,color }) => {
   const { setNodeRef } = useDroppable({ id });
+
+
 
   return (
     <SortableContext id={id} items={items} strategy={horizontalListSortingStrategy}>
-      <ul className="droppable" ref={setNodeRef}>
-        {items.map((item) => (
+      <ul style={{backgroundColor:color}} className="droppable" ref={setNodeRef}>
+        {items.map((item:any) => (
+          
           <SortableItem key={item} id={item} />
         ))}
       </ul>

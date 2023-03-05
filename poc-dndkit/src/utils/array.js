@@ -31,3 +31,15 @@ export const arrayMove = (array, oldIndex, newIndex, id) => {
   console.log(array,oldIndex,newIndex);
   return arrayMoved;
 };
+
+export const arrayEmpty = (array, oldIndex, newIndex, id) => {
+  const newArray = dndKitArrayMove(array, oldIndex, newIndex);
+
+  const arrayMoved ={
+    cards:newArray,
+    id:id,
+    color:"white"
+  }
+  console.log(array,oldIndex,newIndex);
+  return arrayMoved;
+};
