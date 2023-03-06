@@ -57,7 +57,7 @@ export const ActionBox = ({ id, dragOverlay, opacidade }) => {
   );
   }else{
     return (
-      <div style={style} onClick={openModal} className={"opacity-50 w-80 h-48 bg-gray-300 rounded-lg ml-24"}>
+      <div style={style} onClick={openModal} className={"opacity-0 w-80 h-48 bg-gray-300 rounded-lg ml-24"}>
           <div className=" border-b border-black flex flex-row justify-between"> 
           <div className="ml-2 mt-2 mb-2">
                {id}

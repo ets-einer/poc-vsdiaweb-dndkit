@@ -20,13 +20,13 @@ export const insertAtIndex = (array, index, item, id, color) => {
   
 };
 
-export const arrayMove = (array, oldIndex, newIndex, id) => {
+export const arrayMove = (array, oldIndex, newIndex, id, color) => {
   const newArray = dndKitArrayMove(array, oldIndex, newIndex);
 
   const arrayMoved ={
     cards:newArray,
     id:id,
-    color:"white"
+    color:color
   }
   console.log(array,oldIndex,newIndex);
   return arrayMoved;
