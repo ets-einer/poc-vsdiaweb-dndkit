@@ -11,7 +11,10 @@ export default function SortableItem(props:any) {
     setNodeRef,
     transform,
     transition
-  } = useSortable({ id: props.id });
+  } = useSortable({ 
+    id: props.id,
+    disabled: props.id.includes("-") ? true : false
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),

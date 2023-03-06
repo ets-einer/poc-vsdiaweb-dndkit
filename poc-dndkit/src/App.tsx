@@ -39,7 +39,7 @@ const group3={
 const group4={
   cards: ["10", "11", "12", "13", "14"],
   id:4,
-  color:"blue"
+  color:"gray"
 
 }
 var globalNegativo = 1;
